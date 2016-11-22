@@ -1,0 +1,41 @@
+<div class="item item-divider" ng-if="showdivider"></div>
+<div class="item item-avatar">
+    <img ng-if="post.userpictureurl" ng-src="{{post.userpictureurl}}" mm-external-content mm-user-link courseid="{{courseid}}" userid="{{post.userid}}" alt="{{ 'mm.core.pictureof' | translate:{$a: post.userfullname} }}" role="presentation">
+    <img ng-if="!post.userpictureurl" src="img/user-avatar.png"  alt="{{ 'mm.core.pictureof' | translate:{$a: post.userfullname} }}" role="presentation">
+    <h2 ng-if="titleimportant">{{title}}</h2>
+    <p ng-if="!titleimportant">{{title}}</p>
+    <div class="item-note" ng-if="!post.modified"><i class="icon ion-clock"></i> {{ 'mm.core.notsent' | translate }}</div>
+    <div class="item-note" ng-if="post.modified">{{post.modified | mmDateDayOrTime}}</div>
+    <p>{{subject}}</p>
+</div>
+<div class="item item-body" ng-if="newpost.editing !== uniqueid || !newpost.isEditing">
+    <mm-format-text class="mm-content-with-float" watch="true" component="{{component}}" component-id="{{componentId}}">{{post.message}}</mm-format-text>
+    <mm-file ng-repeat="attachment in post.attachments" file="attachment" component="{{component}}" component-id="{{componentId}}"></mm-file>
+</div>
+<div class="item tabs tabs-icon-left mma-hsuforum-align-right" ng-if="((isReplyEnabled && post.canreply) || !post.id) && (newpost.editing !== uniqueid || !newpost.isEditing)">
+    <a ng-if="isReplyEnabled && post.canreply" class="tab-item" title="{{ 'mma.mod_hsuforum.reply' | translate }}" ng-click="showReply()" role="button" aria-controls="mma-hsuforum-reply-edit-form-{{uniqueid}}" aria-expanded="{{ newpost.replyingto === post.id }}">
+        <i class="icon ion-reply"></i> {{ 'mma.mod_hsuforum.reply' | translate }}
+    </a>
+    <a ng-if="!post.id" class="tab-item" title="{{ 'mma.mod_hsuforum.edit' | translate }}" ng-click="editReply()" role="button" aria-controls="mma-hsuforum-reply-edit-form-{{uniqueid}}" aria-expanded="{{ newpost.replyingto === post.parent }}">
+        <i class="icon ion-edit"></i> {{ 'mma.mod_hsuforum.edit' | translate }}
+    </a>
+</div>
+<div id="mma-hsuforum-reply-edit-form-{{uniqueid}}" class="item" ng-if="newpost.editing === uniqueid">
+    <form class="list mma-hsuforum-border">
+        <ion-input class="item item-input item-stacked-label">
+            <ion-label>{{ 'mma.mod_hsuforum.subject' | translate }}</ion-label>
+            <input type="text" placeholder="{{ 'mma.mod_hsuforum.subject' | translate }}" ng-model="newpost.subject">
+        </ion-input>
+        <ion-input class="item item-input item-stacked-label mm-item-has-rich-text-editor">
+            <ion-label>{{ 'mma.mod_hsuforum.message' | translate }}</ion-label>
+            <mm-rich-text-editor model="newpost" placeholder="{{ 'mma.mod_hsuforum.message' | translate }}" scroll-handle="{{scrollHandle}}" name="mod_hsuforum_reply_{{post.id}}" component="{{component}}" component-id="{{post.id}}"></mm-rich-text-editor>
+        </ion-input>
+        <div class="item button-bar">
+            <button class="button" ng-click="reply()" ng-disabled="newpost.subject == '' || newpost.text == ''">{{ 'mma.mod_hsuforum.posttoforum' | translate }}</button>
+            <button class="button" ng-click="cancel()">{{ 'mm.core.cancel' | translate }}</button>
+        </div>
+        <div class="item button-bar" ng-if="newpost.isEditing">
+            <button class="button button-outline button-positive" ng-click="discard()">{{ 'mm.core.discard' | translate }}</button>
+        </div>
+    </form>
+</div>
